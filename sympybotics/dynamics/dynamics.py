@@ -1,6 +1,7 @@
 import sympy
 import numpy
 from sympy import zeros
+from copy import deepcopy
 from .rne import rne, gravityterm, coriolisterm, coriolismatrix,\
     frictionterm, inertiamatrix
 from .regressor import regressor
@@ -22,9 +23,10 @@ class Dynamics(object):
         self.invdyn = rne(self.rbtdef, self.geom, ifunc)
 
     def gen_static(self, ifunc=None):
-        self.rbtdef.dq  = zeros(self.rbtdef.dof, 1)
-        self.rbtdef.ddq  = zeros(self.rbtdef.dof, 1)
-        self.static = rne(self.rbtdef, self.geom, ifunc)
+        rbtdeftmp = deepcopy(self.rbtdef)
+        rbtdeftmp.dq = zeros(rbtdeftmp.dof, 1)
+        rbtdeftmp.ddq = zeros(rbtdeftmp.dof, 1)        
+        self.static = rne(rbtdeftmp, self.geom, ifunc)
 
     def gen_gravityterm(self, ifunc=None):
         self.g = gravityterm(self.rbtdef, self.geom, ifunc)
@@ -32,6 +34,11 @@ class Dynamics(object):
     def gen_coriolisterm(self, ifunc=None):
         self.c = coriolisterm(
             self.rbtdef, self.geom, ifunc)
+
+    def gen_nocoriolisterm(self, ifunc=None):
+        rbtdeftmp = deepcopy(self.rbtdef)
+        rbtdeftmp.dq = zeros(rbtdeftmp.dof, 1)
+        self.noc = rne(rbtdeftmp, self.geom, ifunc)
 
     def gen_coriolismatrix(self, ifunc=None):
         self.C = coriolismatrix(
@@ -52,6 +59,7 @@ class Dynamics(object):
         self.gen_static(ifunc)
         self.gen_gravityterm(ifunc)
         self.gen_coriolisterm(ifunc)
+        self.gen_nocoriolisterm(ifunc)
         self.gen_inertiamatrix(ifunc)
         self.gen_regressor(ifunc)
 

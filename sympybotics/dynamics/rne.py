@@ -136,8 +136,8 @@ def inertiamatrix(rbtdef, geom, ifunc=None):
 
         fw_results = rne_forward(rbtdeftmp, geomtmp, ifunc)
         Mcoli = rne_backward(rbtdeftmp, geomtmp, fw_results, ifunc=ifunc)
-
+        print('Mcoli: ',Mcoli)
         # It's done like this since M is symmetric:
         M[:, i] = (M[i, :i].T) .col_join(Mcoli[i:, :])
-
+        print('M: ',M)
     return M

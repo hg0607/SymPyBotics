@@ -14,5 +14,8 @@ print(static_str)
 rbt.calc_base_parms()
 print(rbt.dyn.baseparms)
 
-g_str = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.g_code, 'g_out', 'g', rbtdef)
-print(g_str)
+noc_str = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.noc_code, 'noc_out', 'noc', rbtdef)
+print(noc_str)
+
+# tau_str = sympybotics.robotcodegen.robot_code_to_func('C', rbt.invdyn_code, 'tau_out', 'tau', rbtdef)
+# print(tau_str)

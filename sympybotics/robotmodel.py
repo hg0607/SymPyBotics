@@ -73,6 +73,11 @@ class RobotDynCode(object):
         self.dyn.gen_coriolisterm(c_se.collect)
         self.c_code = c_se.get(self.dyn.c)
 
+        p('generating nocoriolis term code')
+        noc_se = Subexprs()
+        self.dyn.gen_nocoriolisterm(noc_se.collect)
+        self.noc_code = noc_se.get(self.dyn.noc)
+
         p('generating coriolis matrix code')
         C_se = Subexprs()
         self.dyn.gen_coriolismatrix(C_se.collect)
