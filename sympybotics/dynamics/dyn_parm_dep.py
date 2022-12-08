@@ -1,5 +1,5 @@
 import numpy
-
+# reference: Sousa, Crist¨®v?o D. and Rui Pedro Duarte Cortes?o. ¡°Physical feasibility of robot base inertial parameter identification: A linear matrix inequality approach.¡± The International Journal of Robotics Research 33 (2014): 931 - 944.
 
 def find_dyn_parm_deps(dof, parm_num, regressor_func):
     '''
@@ -21,7 +21,7 @@ def find_dyn_parm_deps(dof, parm_num, regressor_func):
         Z[i * dof: i * dof + dof, :] = numpy.matrix(
             regressor_func(q, dq, ddq)).reshape(dof, parm_num)
 
-    R1_diag = numpy.linalg.qr(Z, mode='economic').diagonal().round(round)
+    R1_diag = numpy.linalg.qr(Z, mode='economic').diagonal().round(round) # returns h with same dimensions of Z,The array h contains the Householder reflectors that generate q along with r
     dbi = []
     ddi = []
     for i, e in enumerate(R1_diag):
@@ -35,10 +35,10 @@ def find_dyn_parm_deps(dof, parm_num, regressor_func):
     Pb = P[:, :dbn]
     Pd = P[:, dbn:]
 
-    Rbd1 = numpy.mat(numpy.linalg.qr(Z * P, mode='r'))
+    Rbd1 = numpy.mat(numpy.linalg.qr(Z * P, mode='r')) #returns r only with dimensions (K, N), The upper-triangular matrix
     Rb1 = Rbd1[:dbn, :dbn]
     Rd1 = Rbd1[:dbn, dbn:]
 
-    Kd = numpy.mat((numpy.linalg.inv(Rb1) * Rd1).round(round))
+    Kd = numpy.mat((numpy.linalg.inv(Rb1) * Rd1).round(round)) #EQ32
 
     return Pb, Pd, Kd

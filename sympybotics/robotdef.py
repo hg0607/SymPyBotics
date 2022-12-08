@@ -9,9 +9,16 @@ def _new_sym(name):
 
 
 def _elements_to_tensor(elems):
-    return sympy.Matrix([[elems[0], elems[1], elems[2]],
+    if len(elems) == 6:
+        return sympy.Matrix([[elems[0], elems[1], elems[2]],
                          [elems[1], elems[3], elems[4]],
                          [elems[2], elems[4], elems[5]]])
+    elif len(elems) == 3:
+        return sympy.Matrix([[elems[0], 0, 0],
+                            [0, elems[1], 0],
+                            [0, 0, elems[2]]])
+    else:
+        raise Exception('dimension of elems error')
 
 
 def _elementslist_to_tensorlist(elementslist):
@@ -179,13 +186,15 @@ class RobotDef(object):
             m[i] = _new_sym('m_' + str(i + 1))
             l[i] = sympy.Matrix([_new_sym('l_' + str(i + 1) + dim)
                                 for dim in ['x', 'y', 'z']])
+            
             Le[i] = [_new_sym('L_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
-
-            r[i] = sympy.Matrix([_new_sym('r_' + str(i + 1) + dim)
-                                for dim in ['x', 'y', 'z']])
+            
             Ie[i] = [_new_sym('I_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
+            
+            r[i] = sympy.Matrix([_new_sym('r_' + str(i + 1) + dim)
+                                for dim in ['x', 'y', 'z']])           
 
             Ia[i] = _new_sym('Ia_' + str(i + 1))
 

@@ -1,6 +1,6 @@
 
 import sympy
-
+# reference: B. Siciliano, L. Sciavicco, L. Villani, and G. Oriolo. Robotics: Modelling, planning and control. Springer, 2009.
 _id = lambda x: x
 
 
@@ -44,19 +44,19 @@ class Kinematics(object):
                 self.Jp[l] = sympy.zeros(3, self.rbtdef.dof)
                 for j in range(l + 1):
                     if self.rbtdef._links_sigma[j]:
-                        self.Jp[l][0:3, j] = ifunc(z_ext[j - 1])
+                        self.Jp[l][0:3, j] = ifunc(z_ext[j - 1]) #EQ(3.30)
                     else:
                         self.Jp[l][0:3, j] = ifunc(z_ext[j - 1].cross(
-                            (p_ext[l] - p_ext[j - 1])).reshape(3, 1))
+                            (p_ext[l] - p_ext[j - 1])).reshape(3, 1)) #EQ(3.30)
 
             self.Jo = list(range(self.rbtdef.dof))
             for l in range(self.rbtdef.dof):
                 self.Jo[l] = sympy.zeros(3, self.rbtdef.dof)
                 for j in range(l + 1):
                     if self.rbtdef._links_sigma[j]:
-                        self.Jo[l][0:3, j] = sympy.zeros(3, 1)
+                        self.Jo[l][0:3, j] = sympy.zeros(3, 1) #EQ(3.30)
                     else:
-                        self.Jo[l][0:3, j] = ifunc(z_ext[j - 1])
+                        self.Jo[l][0:3, j] = ifunc(z_ext[j - 1]) #EQ(3.30)
 
         elif self.rbtdef._dh_convention == 'modified':
 
@@ -65,19 +65,19 @@ class Kinematics(object):
                 self.Jp[l] = sympy.zeros(3, self.rbtdef.dof)
                 for j in range(l + 1):
                     if self.rbtdef._links_sigma[j]:
-                        self.Jp[l][0:3, j] = ifunc(geom.z[j])
+                        self.Jp[l][0:3, j] = ifunc(geom.z[j]) #EQ(3.30)
                     else:
                         self.Jp[l][0:3, j] = ifunc(geom.z[j].cross(
-                            (geom.p[l] - geom.p[j])).reshape(3, 1))
+                            (geom.p[l] - geom.p[j])).reshape(3, 1)) #EQ(3.30)
 
             self.Jo = list(range(self.rbtdef.dof))
             for l in range(self.rbtdef.dof):
                 self.Jo[l] = sympy.zeros(3, self.rbtdef.dof)
                 for j in range(l + 1):
                     if self.rbtdef._links_sigma[j]:
-                        self.Jo[l][0:3, j] = sympy.zeros(3, 1)
+                        self.Jo[l][0:3, j] = sympy.zeros(3, 1) #EQ(3.30)
                     else:
-                        self.Jo[l][0:3, j] = ifunc(geom.z[j])
+                        self.Jo[l][0:3, j] = ifunc(geom.z[j]) #EQ(3.30)
 
         self.J = list(range(self.rbtdef.dof))
         for l in range(self.rbtdef.dof):

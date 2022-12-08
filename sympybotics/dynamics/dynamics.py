@@ -1,11 +1,11 @@
 import sympy
 import numpy
-
+from sympy import zeros
 from .rne import rne, gravityterm, coriolisterm, coriolismatrix,\
     frictionterm, inertiamatrix
 from .regressor import regressor
 from .dyn_parm_dep import find_dyn_parm_deps
-
+# reference: Sousa, Crist¨®v?o D. and Rui Pedro Duarte Cortes?o. ¡°Physical feasibility of robot base inertial parameter identification: A linear matrix inequality approach.¡± The International Journal of Robotics Research 33 (2014): 931 - 944.
 
 class Dynamics(object):
 
@@ -20,6 +20,11 @@ class Dynamics(object):
 
     def gen_invdyn(self, ifunc=None):
         self.invdyn = rne(self.rbtdef, self.geom, ifunc)
+
+    def gen_static(self, ifunc=None):
+        self.rbtdef.dq  = zeros(self.rbtdef.dof, 1)
+        self.rbtdef.ddq  = zeros(self.rbtdef.dof, 1)
+        self.static = rne(self.rbtdef, self.geom, ifunc)
 
     def gen_gravityterm(self, ifunc=None):
         self.g = gravityterm(self.rbtdef, self.geom, ifunc)
@@ -44,6 +49,7 @@ class Dynamics(object):
 
     def gen_all(self, ifunc=None):
         self.gen_invdyn(ifunc)
+        self.gen_static(ifunc)
         self.gen_gravityterm(ifunc)
         self.gen_coriolisterm(ifunc)
         self.gen_inertiamatrix(ifunc)
@@ -62,5 +68,5 @@ class Dynamics(object):
             (numpy.matrix([[i for i in range(self.n_dynparms)]]) *
              numpy.matrix(Pb)).astype(float).astype(int).tolist()[0]
 
-        self.baseparms = (self.Pb.T + self.Kd * self.Pd.T) * self.dynparms
+        self.baseparms = (self.Pb.T + self.Kd * self.Pd.T) * self.dynparms #EQ39
         self.n_base = len(self.baseparms)

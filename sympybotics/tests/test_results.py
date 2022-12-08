@@ -464,3 +464,5 @@ def test_puma_mdh_num_geo_kin_dyn():
     assert not numpy.any(numpy.round(M_assrt2 - M_t2, assert_precision))
     assert not numpy.any(numpy.round(
         tau_assrt2 - H * numpy.matrix(dynparm_test2).T, assert_precision))
+
+test_puma_mdh_num_geo_kin_dyn()

@@ -1,6 +1,7 @@
 import sympy
 
 from .robotdef import _joint_i_symb
+# reference: Sousa, Crist¨®v?o D. and Rui Pedro Duarte Cortes?o. ¡°SageRobotics: open source framework for symbolic computation of robot models.¡± SAC '12 (2012).
 
 _id = lambda x: x
 
@@ -72,11 +73,11 @@ class Geometry(object):
             Mr = sympy.Matrix([[1,           0,            0,  a],
                                [0,  cos(alpha),  -sin(alpha),  0],
                                [0,  sin(alpha),   cos(alpha),  d],
-                               [0,           0,            0,  1]])
+                               [0,           0,            0,  1]]) 
             Pr = sympy.Matrix([[0, -1,  0,  0],
                                [1,  0,  0,  0],
                                [0,  0,  0,  0],
-                               [0,  0,  0,  0]])
+                               [0,  0,  0,  0]]) 
             # from Frank Park paper:
             # Mp = sympy.Matrix(
             #    [[cos(theta), -sin(theta) * cos(alpha), 0,  a * cos(theta)],
@@ -91,7 +92,7 @@ class Geometry(object):
                  [sin(theta), cos(theta) * cos(alpha),
                   -cos(theta) * sin(alpha), a * sin(theta)],
                  [0, sin(alpha), cos(alpha), 0],
-                 [0, 0, 0, 1]])
+                 [0, 0, 0, 1]]) #EQ1
             Pp = sympy.Matrix([[0, 0, 0, 0],
                                [0, 0, 0, 0],
                                [0, 0, 0, 1],
@@ -111,9 +112,9 @@ class Geometry(object):
                 #     follows implemented DH formulation')
 
             Sr = (inverse_T(Mr) * Pr * Mr).applyfunc(
-                lambda x: sympy.trigsimp(x))
+                lambda x: sympy.trigsimp(x)) #EQ18
             Sp = (inverse_T(Mp) * Pp * Mp).applyfunc(
-                lambda x: sympy.trigsimp(x))
+                lambda x: sympy.trigsimp(x)) #EQ18
 
             def sym_se3_unskew(g):
                 w = sympy.Matrix([g[2, 1], g[0, 2], g[1, 0]])

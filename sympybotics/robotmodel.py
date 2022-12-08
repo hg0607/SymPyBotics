@@ -1,7 +1,7 @@
 
 import sys
 import numpy
-
+import math
 from .geometry import Geometry
 from .kinematics import Kinematics
 from .dynamics import Dynamics
@@ -58,6 +58,11 @@ class RobotDynCode(object):
         self.dyn.gen_invdyn(invdyn_se.collect)
         self.invdyn_code = invdyn_se.get(self.dyn.invdyn)
 
+        p('generating static dynamics code')
+        static_se = Subexprs()
+        self.dyn.gen_static(static_se.collect)
+        self.static_code = static_se.get(self.dyn.static)
+
         p('generating gravity term code')
         g_se = Subexprs()
         self.dyn.gen_gravityterm(g_se.collect)
@@ -108,8 +113,8 @@ class RobotDynCode(object):
             ['q', 'dq', 'ddq'], q_subs)
 
         global sin, cos, sign
-        sin = numpy.sin
-        cos = numpy.cos
+        sin = math.sin #numpy.sin
+        cos = math.cos #numpy.cos
         sign = numpy.sign
 
         l = locals()

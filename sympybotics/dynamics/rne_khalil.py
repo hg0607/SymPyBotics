@@ -2,7 +2,7 @@ from sympy import zeros, eye, Matrix
 from .extra_dyn import frictionforce, driveinertiaterm
 from ..utils import sym_skew as skew
 from ..utils import identity
-
+# reference: W. Khalil and E. Dombre, "Modeling, identi?cation and control of robots". Butterworth-Heinemann, 2004.
 
 def rne_khalil_forward(rbtdef, geom, ifunc=None):
     '''RNE forward pass.'''
@@ -28,20 +28,20 @@ def rne_khalil_forward(rbtdef, geom, ifunc=None):
         s = rbtdef._links_sigma[i]
         ns = 1 - s
 
-        w_pj = geom.Rdh[i].T * w[i - 1]
+        w_pj = geom.Rdh[i].T * w[i - 1] #EQ[9.84]
 
-        w[i] = w_pj + ns * rbtdef.dq[i] * z
+        w[i] = w_pj + ns * rbtdef.dq[i] * z #EQ[9.85]
         w[i] = ifunc(w[i])
 
         dw[i] = geom.Rdh[i].T * dw[i - 1] + ns * \
-            (rbtdef.ddq[i] * z + w_pj.cross(rbtdef.dq[i] * z).reshape(3, 1))
+            (rbtdef.ddq[i] * z + w_pj.cross(rbtdef.dq[i] * z).reshape(3, 1)) #EQ[9.86]
         dw[i] = ifunc(dw[i])
 
         dV[i] = geom.Rdh[i].T * (dV[i - 1] + U[i - 1] * geom.pdh[i]) + s * (
-            rbtdef.ddq[i] * z + 2 * w_pj.cross(rbtdef.dq[i] * z).reshape(3, 1))
+            rbtdef.ddq[i] * z + 2 * w_pj.cross(rbtdef.dq[i] * z).reshape(3, 1)) #EQ[9.87]
         dV[i] = ifunc(dV[i])
 
-        U[i] = skew(dw[i]) + skew(w[i]) ** 2
+        U[i] = skew(dw[i]) + skew(w[i]) ** 2 #EQ[9.90]
         U[i] = ifunc(U[i])
 
     return w, dw, dV, U
@@ -81,23 +81,23 @@ def rne_khalil_backward(rbtdef, geom, fw_results, ifunc=None):
         s = rbtdef._links_sigma[i]
         ns = 1 - s
 
-        F[i] = rbtdef.m[i] * dV[i] + U[i] * Matrix(rbtdef.l[i])
+        F[i] = rbtdef.m[i] * dV[i] + U[i] * Matrix(rbtdef.l[i]) #EQ[9.88]
         F[i] = ifunc(F[i])
 
         M[i] = rbtdef.L[i] * dw[i] + w[i].cross(
             rbtdef.L[i] * w[i]).reshape(3, 1) + \
-            Matrix(rbtdef.l[i]).cross(dV[i]).reshape(3, 1)
+            Matrix(rbtdef.l[i]).cross(dV[i]).reshape(3, 1) #EQ[9.89]
         M[i] = ifunc(M[i])
 
-        f_nj = Rdh[i + 1] * f[i + 1]
+        f_nj = Rdh[i + 1] * f[i + 1] #EQ[9.92]
 
-        f[i] = F[i] + f_nj  # + f_e[i]
+        f[i] = F[i] + f_nj  # + f_e[i] #EQ[9.91]
         f[i] = ifunc(f[i])
 
         m[i] = M[i] + Rdh[i + 1] * m[i + 1] + \
-            pdh[i + 1].cross(f_nj).reshape(3, 1)  # + m_e[i]
+            pdh[i + 1].cross(f_nj).reshape(3, 1)  # + m_e[i] #EQ[9.93]
         m[i] = ifunc(m[i])
 
-        tau[i] = ifunc(((s * f[i] + ns * m[i]).T * z)[0] + fric[i] + Idrive[i])
+        tau[i] = ifunc(((s * f[i] + ns * m[i]).T * z)[0] + fric[i] + Idrive[i]) #EQ[9.94]
 
     return tau
