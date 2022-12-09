@@ -22,11 +22,8 @@ class Dynamics(object):
     def gen_invdyn(self, ifunc=None):
         self.invdyn = rne(self.rbtdef, self.geom, ifunc)
 
-    def gen_static(self, ifunc=None):
-        rbtdeftmp = deepcopy(self.rbtdef)
-        rbtdeftmp.dq = zeros(rbtdeftmp.dof, 1)
-        rbtdeftmp.ddq = zeros(rbtdeftmp.dof, 1)        
-        self.static = rne(rbtdeftmp, self.geom, ifunc)
+    def gen_statics(self, ifunc=None):  
+        self.statics = gravityterm(self.rbtdef, self.geom, ifunc) + frictionterm(self.rbtdef, ifunc)
 
     def gen_gravityterm(self, ifunc=None):
         self.g = gravityterm(self.rbtdef, self.geom, ifunc)
@@ -36,9 +33,10 @@ class Dynamics(object):
             self.rbtdef, self.geom, ifunc)
 
     def gen_nocoriolisterm(self, ifunc=None):
-        rbtdeftmp = deepcopy(self.rbtdef)
-        rbtdeftmp.dq = zeros(rbtdeftmp.dof, 1)
-        self.noc = rne(rbtdeftmp, self.geom, ifunc)
+        rbtdeftmp1 = deepcopy(self.rbtdef)
+        rbtdeftmp1.dq = zeros(rbtdeftmp1.dof, 1)
+        rbtdeftmp1.frictionmodel = None     
+        self.noc = rne(rbtdeftmp1, self.geom, ifunc) + frictionterm(self.rbtdef, ifunc)
 
     def gen_coriolismatrix(self, ifunc=None):
         self.C = coriolismatrix(
@@ -56,7 +54,7 @@ class Dynamics(object):
 
     def gen_all(self, ifunc=None):
         self.gen_invdyn(ifunc)
-        self.gen_static(ifunc)
+        self.gen_statics(ifunc)
         self.gen_gravityterm(ifunc)
         self.gen_coriolisterm(ifunc)
         self.gen_nocoriolisterm(ifunc)

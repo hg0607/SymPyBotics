@@ -9,7 +9,6 @@ _frictionterms = set(['Coulomb', 'viscous', 'offset'])
 
 def frictionforce(rbtdef, ifunc=None):
     '''Generate friction forces (Coulomb/viscouse model plus offset).'''
-
     if not ifunc:
         ifunc = identity
 

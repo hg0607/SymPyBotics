@@ -17,6 +17,10 @@ def _elements_to_tensor(elems):
         return sympy.Matrix([[elems[0], 0, 0],
                             [0, elems[1], 0],
                             [0, 0, elems[2]]])
+    elif len(elems) == 0:
+        return sympy.Matrix([[0, 0, 0],
+                            [0, 0, 0],
+                            [0, 0, 0]])
     else:
         raise Exception('dimension of elems error')
 
@@ -55,7 +59,7 @@ _modified_dh_transfmat = sympy.Matrix([
     [0, 0, 0, 1]])
 
 default_frictionmodel = None
-default_driveinertiamodel = None
+default_driveinertiamodel = 'simplified'
 default_gravityacc = sympy.Matrix([[0.0], [0.0], [-9.81]])
 
 
@@ -63,7 +67,7 @@ class RobotDef(object):
 
     """Class that generates and holds robot definitions and symbols."""
 
-    def __init__(self, name, dh_parms, dh_convention, shortname=None):
+    def __init__(self, name, dh_parms, dh_convention, shortname=None, inertial='full'):
         """
         Create RobotDef instance with data structures for robot geometry and
         symbols of robot dynamics.
@@ -77,6 +81,12 @@ class RobotDef(object):
         else:
             self.shortname = ''.join(c for c in name.replace(
                 ' ', '_').replace('.', '_') if c.isalnum() or c == '_')
+        
+        inertial = inertial.lower()
+        if inertial in ['full', 'diag', 'none']:
+            self.inertial = inertial
+        else:
+            raise Exception('inertial must be full, diag or none')
 
         dh_convention = dh_convention.lower()
         if dh_convention in ['standard', 'std', 'dh', 'sdh']:
@@ -149,10 +159,9 @@ class RobotDef(object):
 
         dof = self.dof
 
-        # q = self.q = [ _new_sym('q_'+str(i+1)) for i in range(self.dof) ]
-        # dq = self.dq = [ _new_sym('dq_'+str(i+1)) for i in range(self.dof) ]
-        # ddq = self.ddq = [ _new_sym('ddq_'+str(i+1)) for i in range(self.dof)
-        # ]
+        # q = self.q = sympy.Matrix([ _new_sym('q_'+str(i+1)) for i in range(self.dof) ])
+        # dq = self.dq = sympy.Matrix([ _new_sym('dq_'+str(i+1)) for i in range(self.dof) ])
+        # ddq = self.ddq = sympy.Matrix([ _new_sym('ddq_'+str(i+1)) for i in range(self.dof)])
         self.q = sympy.Matrix([[_new_sym('q' + str(i + 1))]
                               for i in range(self.dof)])
         self.dq = sympy.Matrix([[_new_sym(r'\dot{q}_' + str(i + 1))]
@@ -187,8 +196,16 @@ class RobotDef(object):
             l[i] = sympy.Matrix([_new_sym('l_' + str(i + 1) + dim)
                                 for dim in ['x', 'y', 'z']])
             
-            Le[i] = [_new_sym('L_' + str(i + 1) + elem)
+            if self.inertial == 'full':
+                Le[i] = [_new_sym('L_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
+            elif self.inertial == 'diag':
+                Le[i] = [_new_sym('L_' + str(i + 1) + elem)
+                     for elem in ['xx', 'yy', 'zz']]
+            elif self.inertial == 'none':
+                Le[i] = []
+            else:
+                raise Exception('inertial must be full, diag or none')
             
             Ie[i] = [_new_sym('I_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]

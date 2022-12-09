@@ -2,6 +2,7 @@
 import sys
 import numpy
 import math
+
 from .geometry import Geometry
 from .kinematics import Kinematics
 from .dynamics import Dynamics
@@ -58,10 +59,10 @@ class RobotDynCode(object):
         self.dyn.gen_invdyn(invdyn_se.collect)
         self.invdyn_code = invdyn_se.get(self.dyn.invdyn)
 
-        p('generating static dynamics code')
-        static_se = Subexprs()
-        self.dyn.gen_static(static_se.collect)
-        self.static_code = static_se.get(self.dyn.static)
+        p('generating statics code')
+        statics_se = Subexprs()
+        self.dyn.gen_statics(statics_se.collect)
+        self.statics_code = statics_se.get(self.dyn.statics)
 
         p('generating gravity term code')
         g_se = Subexprs()
@@ -95,7 +96,7 @@ class RobotDynCode(object):
         self._H_se = H_se._subexp_iv
 
         self._codes = ['invdyn_code', 'g_code', 'c_code', 'C_code', 'M_code',
-                       'H_code']
+                       'H_code', 'statics_code', 'noc_code']
 
         if self.rbtdef.frictionmodel is not None:
             p('generating friction term code')
@@ -118,8 +119,8 @@ class RobotDynCode(object):
             ['q', 'dq', 'ddq'], q_subs)
 
         global sin, cos, sign
-        sin = math.sin #numpy.sin
-        cos = math.cos #numpy.cos
+        sin = numpy.sin 
+        cos = numpy.cos 
         sign = numpy.sign
 
         l = locals()
