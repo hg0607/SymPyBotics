@@ -7,16 +7,17 @@ rbtdef = sympybotics.RobotDef('X5',[('pi', 0, 0.25, 'q'),('pi/2', 0, -0.1, 'q'),
 
 rbtdef.frictionmodel = {'Coulomb', 'viscous', 'offset'} # options are None or a combination of 'Coulomb', 'viscous' and 'offset'
 rbtdef.gravityacc = sympy.Matrix([0.0, 0.0, -9.81]) # optional, this is the default value
-print(rbtdef.dynparms())
+print('parms: ', rbtdef.dynparms())
 rbt = sympybotics.RobotDynCode(rbtdef, verbose=True)
 
 statics_str = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.statics_code, 'static_out', 'static', rbtdef)
 print(statics_str)
 rbt.calc_base_parms()
-print(rbt.dyn.baseparms)
+print('baseparms:',rbt.dyn.baseparms)
 
-noc_str = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.noc_code, 'noc_out', 'noc', rbtdef)
-print(noc_str)
+data = open("newfile.txt",'w',encoding="utf-8")
+tau_str = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.invdyn_code, 'tau', 'tau', rbtdef)
+print(tau_str,file=data)
 
-tau_str = sympybotics.robotcodegen.robot_code_to_func('C', rbt.g_code, 'tau_out', 'tau', rbtdef)
-print(tau_str)
+# Yr = sympybotics.robotcodegen.robot_code_to_func('jl', rbt.Hb_code, 'H', 'Hb_code', rbtdef)
+# print(Yr) 

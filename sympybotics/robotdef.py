@@ -17,6 +17,10 @@ def _elements_to_tensor(elems):
         return sympy.Matrix([[elems[0], 0, 0],
                             [0, elems[1], 0],
                             [0, 0, elems[2]]])
+    elif len(elems) == 1:
+        return sympy.Matrix([[0, 0, 0],
+                            [0, 0, 0],
+                            [0, 0, elems[0]]])
     elif len(elems) == 0:
         return sympy.Matrix([[0, 0, 0],
                             [0, 0, 0],
@@ -193,9 +197,10 @@ class RobotDef(object):
         for i in range(dof):
 
             m[i] = _new_sym('m_' + str(i + 1))
+            
             l[i] = sympy.Matrix([_new_sym('l_' + str(i + 1) + dim)
                                 for dim in ['x', 'y', 'z']])
-            
+           
             if self.inertial == 'full':
                 Le[i] = [_new_sym('L_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
@@ -203,15 +208,16 @@ class RobotDef(object):
                 Le[i] = [_new_sym('L_' + str(i + 1) + elem)
                      for elem in ['xx', 'yy', 'zz']]
             elif self.inertial == 'none':
-                Le[i] = []
+                Le[i] = [_new_sym('L_' + str(i + 1) + elem)
+                     for elem in ['zz']]
             else:
                 raise Exception('inertial must be full, diag or none')
             
             Ie[i] = [_new_sym('I_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
-            
+               
             r[i] = sympy.Matrix([_new_sym('r_' + str(i + 1) + dim)
-                                for dim in ['x', 'y', 'z']])           
+                                for dim in ['x', 'y', 'z']])   
 
             Ia[i] = _new_sym('Ia_' + str(i + 1))
 
