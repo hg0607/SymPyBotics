@@ -20,9 +20,15 @@ for i=1:len
     eval(cell2mat(data(i)));
 end
 
-eval('tau1 = subs(simplify(tau(1)),[L_1xy, L_1xz, L_1yz, L_2xy, L_2xz, L_2yz, L_3xy, L_3xz, L_3yz],[0, 0, 0, 0, 0, 0, 0, 0, 0])')
-eval('tau2 = subs(simplify(tau(2)),[L_1xy, L_1xz, L_1yz, L_2xy, L_2xz, L_2yz, L_3xy, L_3xz, L_3yz],[0, 0, 0, 0, 0, 0, 0, 0, 0])')
-eval('tau3 = subs(simplify(tau(3)),[L_1xy, L_1xz, L_1yz, L_2xy, L_2xz, L_2yz, L_3xy, L_3xz, L_3yz],[0, 0, 0, 0, 0, 0, 0, 0, 0])')
+% 不要的项替换成0
+subitems = [L_1xy, L_1xz, L_1yz, L_2xy, L_2xz, L_2yz, L_3xy, L_3xz, L_3yz];
+subzeros = zeros(1,length(subitems));
 
+tau1 = eval('simplify(tau(1))');
+tau2 = eval('simplify(tau(2))');
+tau3 = eval('simplify(tau(3))');
 
+tau1 = subs(tau1,subitems,subzeros)
+tau2 = subs(tau2,subitems,subzeros)
+tau3 = subs(tau3,subitems,subzeros)
 
