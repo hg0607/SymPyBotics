@@ -100,12 +100,12 @@ def codestring_count(codestring, resume=False):
         muls = int(codestring.count('*')) + int(
             codestring.count('/')) + int(codestring.count('pow'))
         return ops, {'add': adds, 'mul': muls, 'total': adds + muls}
-
+code_to_string
 
 def gen_py_func(code, out_parms, func_parms, func_name='func'):
 
     indent = 4 * ' '
-
+    
     pycode = 'def ' + func_name + '('
     pycode += ', '.join(func_parms)
     pycode += '):\n\n'
@@ -152,7 +152,8 @@ def gen_c_func(code, out_parms, func_parms, func_name='func'):
 
 def gen_julia_func(code, out_parms, func_parms, func_name='func'):
 
-    indent = 4 * ' '
+    # indent = 4 * ' '
+    indent = ''
 
     # ccode = 'function ' + func_name + '('
 
