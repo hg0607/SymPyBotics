@@ -57,7 +57,7 @@ def _ccode(expr, ):
 
 def _juliacode(expr, ):
     code = sympy.printing.lambdarepr.lambdarepr(expr)
-    return code.replace('**', '^').replace('[', '(').replace(']', ')')
+    return code.replace('**', '.^').replace('[', '(:,').replace(']', ')').replace('*','.*')
 
 
 def code_to_string(code, out_parms, printer, indent='', realtype='',
@@ -182,7 +182,7 @@ def gen_julia_func(code, out_parms, func_parms, func_name='func'):
     # ccode += '\nend'
 
     # ccode = ccode.replace('\n\n', '\n#\n')
-    ccode = ccode.replace('[', '(').replace(']', ')')
+    ccode = ccode.replace('[', '(:,').replace(']', ')')
 
     return ccode
 

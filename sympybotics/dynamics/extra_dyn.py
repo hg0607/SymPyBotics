@@ -1,6 +1,6 @@
 """ Extra dynamic terms modelation """
 
-from sympy import zeros, sign
+from sympy import zeros, sign, tanh
 from ..utils import identity
 
 
@@ -24,7 +24,7 @@ def frictionforce(rbtdef, ifunc=None):
                     fric[i] += rbtdef.fv[i] * rbtdef.dq[i]
             if 'Coulomb' in askedterms:
                 for i in range(rbtdef.dof):
-                    fric[i] += rbtdef.fc[i] * sign(rbtdef.dq[i])
+                    fric[i] += rbtdef.fc[i] * tanh(100*rbtdef.dq[i])
             if 'offset' in askedterms:
                 for i in range(rbtdef.dof):
                     fric[i] += rbtdef.fo[i]

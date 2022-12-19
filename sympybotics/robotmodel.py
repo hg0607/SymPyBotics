@@ -118,10 +118,11 @@ class RobotDynCode(object):
             'python', self.H_code, 'regressor', 'regressor_func',
             ['q', 'dq', 'ddq'], q_subs)
 
-        global sin, cos, sign
+        global sin, cos, sign, tanh
         sin = numpy.sin 
         cos = numpy.cos 
         sign = numpy.sign
+        tanh = numpy.tanh
 
         l = locals()
         exec_(func_def_regressor, globals(), l)

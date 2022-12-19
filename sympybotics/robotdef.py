@@ -63,7 +63,7 @@ _modified_dh_transfmat = sympy.Matrix([
     [0, 0, 0, 1]])
 
 default_frictionmodel = None
-default_driveinertiamodel = 'simplified'
+default_driveinertiamodel = None
 default_gravityacc = sympy.Matrix([[0.0], [0.0], [-9.81]])
 
 
@@ -91,7 +91,7 @@ class RobotDef(object):
             self.inertial = inertial
         else:
             raise Exception('inertial must be full, diag or none')
-
+       
         dh_convention = dh_convention.lower()
         if dh_convention in ['standard', 'std', 'dh', 'sdh']:
             self._dh_convention = 'standard'
@@ -198,9 +198,10 @@ class RobotDef(object):
 
             m[i] = _new_sym('m_' + str(i + 1))
             
+            
             l[i] = sympy.Matrix([_new_sym('l_' + str(i + 1) + dim)
                                 for dim in ['x', 'y', 'z']])
-           
+                                                   
             if self.inertial == 'full':
                 Le[i] = [_new_sym('L_' + str(i + 1) + elem)
                      for elem in ['xx', 'xy', 'xz', 'yy', 'yz', 'zz']]
